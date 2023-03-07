@@ -19,7 +19,7 @@ library(scales)
 options(scipen=999)
 
 #working directory
-setwd ("C:/Users/lucaw/Downloads")
+setwd ("")
 getwd()
 
 
@@ -27,8 +27,11 @@ getwd()
 ### STEP 2: LOAD AND SELECT DATA (E.G. AMAZON REVIEWS) 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # load data
-load("Activity_trackers.rda")
 load("ChatGPT.rda")
+
+tweets_orig <- tweets
+
+
 
 # OPTIONAL: Specify minimum text length (number of characters)
 #tweets <- subset(tweets, tweets$text_length > 100)
@@ -37,8 +40,15 @@ load("ChatGPT.rda")
 #tweets<- subset(tweets, tweets$product == "Fitbit Charge 2")
 
 
-# Ex 1
+
+
+# Ex 1 - say about user
 #Average/ median of Hour when to tweet, Nr of Retweets, Likes,Followers, Freinds, verified
+# take unique users
+Users <- tweets[4:10]
+Users = Users[!duplicated(Users$User),]
+
+#create Histogramm for Tweettime
 plot_dataHour <- tweets %>% 
   group_by (timeofday_hour) %>%
   count()
@@ -51,22 +61,33 @@ ggplot (plot_dataHour,
   xlab("Hour") +
   ylab("Number of tweets")
 
-retweets_median = median(tweets$Retweets)
-retweets_mean = mean(tweets$Retweets)
 
-likes_median = median(tweets$Likes)
-likes_mean = mean(tweets$Likes)
 
-Friends_median = median(tweets$UserFriends)
-Friends_mean = mean(tweets$UserFriends)
+#create median
+retweets_median = median(Users$Retweets)
+retweets_mean = mean(Users$Retweets)
 
-Followers_median = median(tweets$UserFollowers)
-Followers_mean = mean(tweets$UserFollowers)
+likes_median = median(Users$Likes)
+likes_mean = mean(Users$Likes)
 
-verified_median = median(tweets$UserVerified)
-verified_mean = mean(tweets$UserVerified)
+Friends_median = median(Users$UserFriends)
+Friends_mean = mean(Users$UserFriends)
 
-#ex 3
+Followers_median = median(Users$UserFollowers)
+Followers_mean = mean(Users$UserFollowers)
+
+verified_median = median(Users$UserVerified)
+verified_mean = mean(Users$UserVerified)
+
+#ex 2 what ar the tweets about? (Industries, specific applications and emotions)
+
+
+
+
+
+
+
+#ex 3 how did the exitment cahnge over time
 #number of tweets over time
 plot_data <- tweets %>% 
   group_by (tweet_date) %>%
@@ -80,6 +101,9 @@ ggplot (plot_data,
   xlab("Date 22/23") +
   ylab("Number of tweets")
 
+
+
+#ex 4 
 
 
 
