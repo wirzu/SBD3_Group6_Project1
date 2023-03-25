@@ -7,7 +7,7 @@ output: html_document
 
 ##Introduction
 Beschriebung einfügen über Projekt.
-## LOAD PACKAGES
+## Load packages and data
 ```{R}
 library (syuzhet)
 library (stringr)
@@ -15,4 +15,12 @@ library (tidyverse)
 library (ggplot2)
 library(scales)
 options(scipen=999)
+
+load("ChatGPT.rda")
+```
+
+## Titel einfügen 
+```{R}
+# Creating a copy of tweets
+tweets_orig <- tweets
 ```
