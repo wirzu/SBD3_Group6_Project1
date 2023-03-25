@@ -23,4 +23,10 @@ load("ChatGPT.rda")
 ```{R}
 # Creating a copy of tweets
 tweets_orig <- tweets
+
+# Calculating average lenght of tweet
+char_counts <- nchar(tweets$Tweet)
+av_char_count <- mean(char_counts)
+rounded_avg_char_count <- round(av_char_count, 2)
+print(rounded_avg_char_count)
 ```
