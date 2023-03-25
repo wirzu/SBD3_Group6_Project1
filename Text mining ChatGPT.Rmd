@@ -20,7 +20,7 @@ options(scipen=999)
 load("ChatGPT.rda")
 ```
 
-## Titel einfügen 
+## 1. Question: What can you tell us about the users that tweet about ChatGPT?
 ```{R}
 # Creating a copy of tweets
 tweets_orig <- tweets
@@ -29,7 +29,39 @@ tweets_orig <- tweets
 char_counts <- nchar(tweets$Tweet)
 av_char_count <- mean(char_counts)
 rounded_avg_char_count <- round(av_char_count, 2)
-print(rounded_avg_char_count)
+# tabelle einfügen mit rounded_avg_char_count!!!!!
+
+
+#Average/ median of Hour when to tweet, Nr of Retweets, Likes,Followers, Freinds, verified
+# take unique users
+Users <- tweets[4:10]
+Users = Users[!duplicated(Users$User),]
+
+#create Histogramm for Tweettime
+plot_dataHour <- tweets %>% 
+  group_by (timeofday_hour) %>%
+  count()
+
+ggplot (plot_dataHour, 
+        aes (x=timeofday_hour, y=n)) +
+  geom_bar(stat = "identity")+
+  theme_minimal () +
+  ggtitle("Number of tweets over time (per hour)") +
+  xlab("Hour") +
+  ylab("Number of tweets")
+
+#Number of tweets tweeted of an user
+#range breaks
+range_breaks <- c(0, 100, 500, 1500, 5000, 15000000)
+
+#Appling cut() on follower-data
+Users$range <- cut(Users$UserFollowers, breaks = range_breaks)
+
+Users <- na.omit(Users)
+
+# Creating Barplot
+ggplot(Users, aes(x = range, fill = range)) + geom_bar() + labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users") + scale_x_discrete(labels = function(x) format(x, scientific = FALSE))
+
 ```
 ## Pre processing
 ```{R}
@@ -63,6 +95,5 @@ preprocess_text <- function(text) {
 # Apply the preprocessing function to the Tweet column
 tweets$preprocessed_text <- sapply(tweets$Tweet, preprocess_text)
 
-
-
 ```
+Erklärung was für anpassungen wir gemacht haben.
