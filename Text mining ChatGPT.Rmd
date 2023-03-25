@@ -5,9 +5,8 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-##Introduction
-Beschriebung einfügen über Projekt.
-## Load packages and data
+##Introduction Beschriebung einfügen über Projekt. \## Load packages and data
+
 ```{R}
 library (syuzhet)
 library (stringr)
@@ -15,15 +14,22 @@ library (tidyverse)
 library (ggplot2)
 library(scales)
 library(stringi)
+library(lubridate)
+library(dplyr)
 options(scipen=999)
 
 load("ChatGPT.rda")
 ```
 
 ## 1. Question: What can you tell us about the users that tweet about ChatGPT?
+
 ```{R}
 # Creating a copy of tweets
 tweets_orig <- tweets
+
+# take unique users
+Users <- tweets[4:10]
+Users = Users[!duplicated(Users$User),]
 
 # Calculating average lenght of tweet
 char_counts <- nchar(tweets$Tweet)
@@ -31,11 +37,32 @@ av_char_count <- mean(char_counts)
 rounded_avg_char_count <- round(av_char_count, 2)
 # tabelle einfügen mit rounded_avg_char_count!!!!!
 
+#create median
+retweets_median = median(Users$Retweets)
+retweets_mean = mean(Users$Retweets)
 
-#Average/ median of Hour when to tweet, Nr of Retweets, Likes,Followers, Freinds, verified
-# take unique users
-Users <- tweets[4:10]
-Users = Users[!duplicated(Users$User),]
+likes_median = median(Users$Likes)
+likes_mean = mean(Users$Likes)
+
+Friends_median = median(Users$UserFriends)
+Friends_mean = mean(Users$UserFriends)
+
+Followers_median = median(Users$UserFollowers)
+Followers_mean = mean(Users$UserFollowers)
+
+verified_median = median(Users$UserVerified)
+verified_mean = mean(Users$UserVerified)
+
+# Create a tibble with the values
+my_table <- tibble(
+  Statistik = c("Retweets", "Likes", "Friends", "Followers", "Verified"),
+  Median = c(retweets_median, likes_median, Friends_median, Followers_median, verified_median),
+  Average = c(retweets_mean, likes_mean, Friends_mean, Followers_mean, verified_mean)
+)
+
+print(my_table)
+
+#Average/ median of Hour when to tweet, Nr of Retweets, Likes, Followers, Friends, verified
 
 #create Histogramm for Tweettime
 plot_dataHour <- tweets %>% 
@@ -60,10 +87,35 @@ Users$range <- cut(Users$UserFollowers, breaks = range_breaks)
 Users <- na.omit(Users)
 
 # Creating Barplot
-ggplot(Users, aes(x = range, fill = range)) + geom_bar() + labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users") + scale_x_discrete(labels = function(x) format(x, scientific = FALSE))
+ggplot(Users, aes(x = range, fill = range)) + geom_bar() + labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users")
+# Beschriftung x Achse auf numerisch wechseln !!!!!!
+
+#number of tweets over time
+plot_data <- tweets %>% 
+  group_by (tweet_date) %>%
+  count()
+
+ggplot (plot_data, 
+        aes (x=tweet_date, y=n)) +
+  geom_bar(stat = "identity")+
+  theme_minimal () +
+  ggtitle("Number of reviews over time (per day)") +
+  xlab("Date 22/23") +
+  ylab("Number of tweets")
+
+# Convert UserCreated to datetime format
+Users$UserCreated <- ymd_hms(Users$UserCreated)
+
+# Create the plot
+ggplot(Users, aes(x = UserCreated)) + 
+  geom_histogram(bins = 50, fill = "#69b3a2", color = "#e9ecef") +
+  labs(x = "Account Creation Date", y = "Number of Accounts") +
+  ggtitle("Twitter Account Creation Dates")
 
 ```
+
 ## Pre processing
+
 ```{R}
 # Define a function to preprocess the text
 preprocess_text <- function(text) {
@@ -96,4 +148,5 @@ preprocess_text <- function(text) {
 tweets$preprocessed_text <- sapply(tweets$Tweet, preprocess_text)
 
 ```
-Erklärung was für anpassungen wir gemacht haben.
+
+## 2. What are the tweets about, what do users associated the new technology with (e.g. industries, specific applications, and also emotions)?
