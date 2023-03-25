@@ -357,8 +357,8 @@ display: none;
 </div>
 
 
-<p>##Introduction Beschriebung einfügen über Projekt. ## LOAD
-PACKAGES</p>
+<p>##Introduction Beschriebung einfügen über Projekt. ## Load packages
+and data</p>
 <pre class="r"><code>library (syuzhet)
 library (stringr)
 library (tidyverse)</code></pre>
@@ -386,7 +386,54 @@ library(scales)</code></pre>
 ## Das folgende Objekt ist maskiert &#39;package:syuzhet&#39;:
 ## 
 ##     rescale</code></pre>
-<pre class="r"><code>options(scipen=999)</code></pre>
+<pre class="r"><code>library(stringi)
+options(scipen=999)
+
+load(&quot;ChatGPT.rda&quot;)</code></pre>
+<div id="titel-einfügen" class="section level2">
+<h2>Titel einfügen</h2>
+<pre class="r"><code># Creating a copy of tweets
+tweets_orig &lt;- tweets
+
+# Calculating average lenght of tweet
+char_counts &lt;- nchar(tweets$Tweet)
+av_char_count &lt;- mean(char_counts)
+rounded_avg_char_count &lt;- round(av_char_count, 2)
+print(rounded_avg_char_count)</code></pre>
+<pre><code>## [1] 164.15</code></pre>
+</div>
+<div id="pre-processing" class="section level2">
+<h2>Pre processing</h2>
+<pre class="r"><code># Define a function to preprocess the text
+preprocess_text &lt;- function(text) {
+  
+  # Convert text to lower case
+  text &lt;- tolower(text)
+  
+  # Remove emojis and emoticons
+  text &lt;- gsub(&quot;[\U0001F600-\U0001F64F\U0001F910-\U0001F96F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF\U0001F1E0-\U0001F1FF]&quot;, &quot;&quot;, text, perl=TRUE)
+  
+  # Remove numbers
+  text &lt;- gsub(&quot;\\d+&quot;, &quot;&quot;, text)
+  
+  # Remove punctuation
+  text &lt;- gsub(&quot;[[:punct:]]&quot;, &quot;&quot;, text)
+  
+  # Remove whitespace
+  text &lt;- gsub(&quot;\\s+&quot;, &quot; &quot;, text)
+  
+  # Remove stopwords and other words to be removed
+  words_to_remove &lt;- c(&quot;the&quot;, &quot;and&quot;, &quot;in&quot;, &quot;to&quot;, &quot;a&quot;, &quot;of&quot;)
+  words_to_remove_pattern &lt;- paste0(&quot;\\b(&quot;, paste(words_to_remove, collapse = &quot;|&quot;), &quot;)\\b&quot;)
+  text &lt;- gsub(words_to_remove_pattern, &quot;&quot;, text, ignore.case = TRUE)
+  
+  # Return the preprocessed text
+  return(text)
+}
+
+# Apply the preprocessing function to the Tweet column
+tweets$preprocessed_text &lt;- sapply(tweets$Tweet, preprocess_text)</code></pre>
+</div>
 
 
 
