@@ -20,9 +20,9 @@ options(scipen=999)
 
 #working directory
 #setwd ("")
-#getwd()
+getwd()
 
-#testkommentar 
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### STEP 2: LOAD AND SELECT DATA (E.G. AMAZON REVIEWS) 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

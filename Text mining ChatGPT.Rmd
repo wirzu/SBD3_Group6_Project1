@@ -1,0 +1,18 @@
+---
+title: "Text mining ChatGPT"
+author: "Abishan, Josua, Lars, Luca"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+##Introduction
+Beschriebung einfügen über Projekt.
+## LOAD PACKAGES
+```{R}
+library (syuzhet)
+library (stringr)
+library (tidyverse)
+library (ggplot2)
+library(scales)
+options(scipen=999)
+```
