@@ -164,4 +164,53 @@ preprocess_text <- function(text) {
 tweets$preprocessed_text <- sapply(tweets$Tweet, preprocess_text)
 
 ```
+Erklärung zu pr Prozessing, bzw. was wir entfernt haben. (Absichtlich nicht buchstaben sonder Füllwörter entfernt)
+```{R}
 
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### STEP 3: PERFORM AUTOMATED CONTENT ANALYSIS
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#Select text column and create your custom dictionary
+tweets$dic1 <- "NA"
+tweets$dic1 <-str_count(tweets$preprocessed_text, "design|color|black|looks")
+tweets$dic2 <-str_count(tweets$preprocessed_text, "bad|dislike|waste|don't")
+tweets$dic3 <-str_count(tweets$preprocessed_text, "bad|dislike|waste|dont")
+tweets$dic2_occurence<-ifelse(tweets$dic2>=2,1,0)
+tweets$dic3_occurence<-ifelse(tweets$dic3>=2,1,0)
+tweets$dic1_occurence<- "NA"
+#select threshold for occurence of the topic
+tweets$dic1_occurence<-ifelse(tweets$dic1>=2,1,0)
+#number of reviews that cover topic
+sum (tweets$dic1_occurence)
+sum(tweets$dic2_occurence)
+
+## VISUALIZE RESULTS
+#sum of reviews that cover topic per day
+plot_data <- tweets %>% 
+  group_by (tweet_date) %>%
+  summarise(n_content=sum(dic3_occurence))
+
+ggplot (plot_data, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic (per month)")
+```
+
+```{R}
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### STEP 4: PERFORM SENTIMENT ANALYSIS
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#Select text column and calculate sentiment scores. You can change the method (e.g."syuzhet", "bing", "nrc")
+tweets$sentiment <- "NA"
+tweets$sentiment <- get_sentiment(tweets$preprocessed_text, method="syuzhet", lang="english")
+
+## VISUALIZE RESULTS
+# mean over time
+plot_data <- tweets %>% 
+  group_by (tweet_date) %>%
+  summarise(n_sentiment=mean(sentiment))
+
+ggplot (plot_data, aes (x=tweet_date, y=n_sentiment)) + geom_line()+ theme_minimal () + ggtitle("Sentiment scores over time (mean per month)")
+
+
+
+```
