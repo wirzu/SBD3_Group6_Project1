@@ -172,45 +172,96 @@ Erklärung zu pr Prozessing, bzw. was wir entfernt haben. (Absichtlich nicht buc
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #Select text column and create your custom dictionary
-tweets$dic1 <- "NA"
-tweets$dic1 <-str_count(tweets$preprocessed_text, "design|color|black|looks")
-tweets$dic2 <-str_count(tweets$preprocessed_text, "bad|dislike|waste|don't")
-tweets$dic3 <-str_count(tweets$preprocessed_text, "bad|dislike|waste|dont")
-tweets$dic2_occurence<-ifelse(tweets$dic2>=2,1,0)
-tweets$dic3_occurence<-ifelse(tweets$dic3>=2,1,0)
-tweets$dic1_occurence<- "NA"
-#select threshold for occurence of the topic
+# dic1 = industries
+#tweets$dic1 <- "NA"
+tweets$dic1 <-str_count(tweets$preprocessed_text, "artificial intelligence|machine learning|automation|robotics|data")
+#tweets$dic1_occurence<- "NA"
 tweets$dic1_occurence<-ifelse(tweets$dic1>=2,1,0)
-#number of reviews that cover topic
+# dic2 = specific applications
+tweets$dic2 <-str_count(tweets$preprocessed_text, "chatbot|language modeling|ai|artificial intelligence|machine learning")
+tweets$dic2_occurence<-ifelse(tweets$dic2>=2,1,0)
+# dic3 = emotions
+tweets$dic3 <-str_count(tweets$preprocessed_text, "excited|happy|frustated|angry|sad|amused")
+tweets$dic3_occurence<-ifelse(tweets$dic3>=2,1,0)
+# dic4 = hype
+tweets$dic4 <-str_count(tweets$preprocessed_text, "excited|hyped|thrilled|stoked|pumped")
+tweets$dic4_occurence<-ifelse(tweets$dic4>=2,1,0)
+
+
 sum (tweets$dic1_occurence)
 sum(tweets$dic2_occurence)
-
-## VISUALIZE RESULTS
-#sum of reviews that cover topic per day
-plot_data <- tweets %>% 
-  group_by (tweet_date) %>%
-  summarise(n_content=sum(dic3_occurence))
-
-ggplot (plot_data, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic (per month)")
+sum(tweets$dic3_occurence)
+sum(tweets$dic4_occurence)
 ```
 
 ```{R}
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### STEP 4: PERFORM SENTIMENT ANALYSIS
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## VISUALIZE RESULTS dictionary 1 (industries)
+#sum of reviews that cover topic per day
+plot_content_data1 <- tweets %>% 
+  group_by (tweet_date) %>%
+  summarise(n_content=sum(dic1_occurence))
 
+ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic industries (per month)")
+```
+Erklärung einfügen Dictionary industries!!!
+```{R}
+## VISUALIZE RESULTS dictionary 2 (specific applications)
+#sum of reviews that cover topic per day
+plot_content_data2 <- tweets %>% 
+  group_by (tweet_date) %>%
+  summarise(n_content=sum(dic2_occurence))
+
+ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic specific applications (per month)")
+```
+Erklärung einfügen Dictionary specific applications!!!
+```{R}
+## VISUALIZE RESULTS dictionary 3 (emotions)
+#sum of reviews that cover topic per day
+plot_content_data3 <- tweets %>% 
+  group_by (tweet_date) %>%
+  summarise(n_content=sum(dic3_occurence))
+
+ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic emotions (per month)")
+```
+Erklärung einfügen Dictionary emotions!!!
+```{R}
+## VISUALIZE RESULTS dictionary 4 (hype)
+#sum of reviews that cover topic per day
+plot_content_data4 <- tweets %>% 
+  group_by (tweet_date) %>%
+  summarise(n_content=sum(dic4_occurence))
+
+ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic hype (per month)")
+```
+Erklärung einfügen Dictionary hype!!!
+```{R}
+# Perform sentiment analysis
 #Select text column and calculate sentiment scores. You can change the method (e.g."syuzhet", "bing", "nrc")
 tweets$sentiment <- "NA"
 tweets$sentiment <- get_sentiment(tweets$preprocessed_text, method="syuzhet", lang="english")
 
 ## VISUALIZE RESULTS
 # mean over time
-plot_data <- tweets %>% 
+plot_sentiment_data <- tweets %>% 
   group_by (tweet_date) %>%
   summarise(n_sentiment=mean(sentiment))
 
-ggplot (plot_data, aes (x=tweet_date, y=n_sentiment)) + geom_line()+ theme_minimal () + ggtitle("Sentiment scores over time (mean per month)")
-
-
-
+ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + geom_line()+ theme_minimal () + ggtitle("Sentiment scores over time (mean per month)")
 ```
+
+```{R}
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### STEP 5: PERFORM ADDITIONAL ANALYSIS
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+#correlation of sentiment with custom dictionary
+cor(tweets$dic1, tweets$Likes, method = "pearson")
+cor(tweets$dic1, tweets$sentiment, method = "pearson")
+cor(tweets$dic2, tweets$Likes, method = "pearson")
+cor(tweets$dic2, tweets$sentiment, method = "pearson")
+cor(tweets$dic3, tweets$Likes, method = "pearson")
+cor(tweets$dic3, tweets$sentiment, method = "pearson")
+cor(tweets$dic4, tweets$Likes, method = "pearson")
+cor(tweets$dic4, tweets$sentiment, method = "pearson")
+````
