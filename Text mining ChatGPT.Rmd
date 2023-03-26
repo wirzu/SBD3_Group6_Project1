@@ -2,7 +2,9 @@
 title: "Text mining ChatGPT"
 author: "Abishan, Josua, Lars, Luca"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ##Introduction Beschriebung einfügen über Projekt. \## Load packages and data
@@ -61,7 +63,10 @@ my_table <- tibble(
 )
 
 print(my_table)
+```
+Hier Erklärung Tabelle einfügen. (Joshi)
 
+```{R}
 #Average/ median of Hour when to tweet, Nr of Retweets, Likes, Followers, Friends, verified
 
 #create Histogramm for Tweettime
@@ -76,7 +81,10 @@ ggplot (plot_dataHour,
   ggtitle("Number of tweets over time (per hour)") +
   xlab("Hour") +
   ylab("Number of tweets")
+```
+Hier Erklärung Grafik einfügen. (Joshi)
 
+```{R}
 #Number of tweets tweeted of an user
 #range breaks
 range_breaks <- c(0, 100, 500, 1500, 5000, 15000000)
@@ -89,7 +97,10 @@ Users <- na.omit(Users)
 # Creating Barplot
 ggplot(Users, aes(x = range, fill = range)) + geom_bar() + labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users")
 # Beschriftung x Achse auf numerisch wechseln !!!!!!
+```
+Hier Erklärung Grafik einfügen. (Joshi)
 
+```{R}
 #number of tweets over time
 plot_data <- tweets %>% 
   group_by (tweet_date) %>%
@@ -102,7 +113,9 @@ ggplot (plot_data,
   ggtitle("Number of reviews over time (per day)") +
   xlab("Date 22/23") +
   ylab("Number of tweets")
-
+```
+Hier Erklärung Grafik einfügen. (Joshi)
+```{R}
 # Convert UserCreated to datetime format
 Users$UserCreated <- ymd_hms(Users$UserCreated)
 
@@ -113,6 +126,9 @@ ggplot(Users, aes(x = UserCreated)) +
   ggtitle("Twitter Account Creation Dates")
 
 ```
+Hier Erklärung Grafik einfügen. (Joshi)
+
+## 2. What are the tweets about, what do users associated the new technology with (e.g. industries, specific applications, and also emotions)?
 
 ## Pre processing
 
@@ -149,4 +165,3 @@ tweets$preprocessed_text <- sapply(tweets$Tweet, preprocess_text)
 
 ```
 
-## 2. What are the tweets about, what do users associated the new technology with (e.g. industries, specific applications, and also emotions)?
