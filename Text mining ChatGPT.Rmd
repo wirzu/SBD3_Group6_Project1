@@ -95,8 +95,12 @@ Users$range <- cut(Users$UserFollowers, breaks = range_breaks)
 Users <- na.omit(Users)
 
 # Creating Barplot
-ggplot(Users, aes(x = range, fill = range)) + geom_bar() + labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users")
-# Beschriftung x Achse auf numerisch wechseln !!!!!!
+ggplot(Users, aes(x = range, fill = range)) + 
+  geom_bar() + 
+  labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users") +
+  scale_x_discrete(labels = c("0-100", "101-500", "501-1500", "1501-5000", "5000+")) +
+  scale_y_continuous(labels = scales::comma_format())
+
 ```
 Hier Erklärung Grafik einfügen. (Joshi)
 
