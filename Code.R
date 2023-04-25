@@ -87,7 +87,7 @@ verified_mean = mean(Users$UserVerified)
 
 
 
-#ex 3 how did the exitment cahnge over time
+#ex 3 how did the excitement change over time
 #number of tweets over time
 plot_data <- tweets %>% 
   group_by (tweet_date) %>%

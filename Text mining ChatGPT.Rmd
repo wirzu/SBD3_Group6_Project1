@@ -7,7 +7,8 @@ output:
   html_document: default
 ---
 
-##Introduction Beschriebung einfügen über Projekt. \## Load packages and data
+##Introduction Beschriebung einfügen über Projekt. 
+## Load packages and data
 
 ```{R}
 library (syuzhet)
@@ -169,7 +170,7 @@ preprocess_text <- function(text) {
 tweets$preprocessed_text <- sapply(tweets$Tweet, preprocess_text)
 
 ```
-Erklärung zu pr Prozessing, bzw. was wir entfernt haben. (Absichtlich nicht buchstaben sonder Füllwörter entfernt)
+Erklärung zu pre Prozessing, bzw. was wir entfernt haben. (Absichtlich nicht buchstaben sonder Füllwörter entfernt)
 ```{R}
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -183,7 +184,7 @@ tweets$dic1 <-str_count(tweets$preprocessed_text, "artificial intelligence|machi
 #tweets$dic1_occurence<- "NA"
 tweets$dic1_occurence<-ifelse(tweets$dic1>=2,1,0)
 # dic2 = specific applications
-tweets$dic2 <-str_count(tweets$preprocessed_text, "chatbot|language modeling|ai|artificial intelligence|machine learning")
+tweets$dic2 <-str_count(tweets$preprocessed_text, "chatbot|language modeling|ai|artificial intelligence|ml|machine learning")
 tweets$dic2_occurence<-ifelse(tweets$dic2>=2,1,0)
 # dic3 = emotions
 tweets$dic3 <-str_count(tweets$preprocessed_text, "excited|happy|frustated|angry|sad|amused")
@@ -191,6 +192,7 @@ tweets$dic3_occurence<-ifelse(tweets$dic3>=2,1,0)
 # dic4 = hype
 tweets$dic4 <-str_count(tweets$preprocessed_text, "excited|hyped|thrilled|stoked|pumped")
 tweets$dic4_occurence<-ifelse(tweets$dic4>=2,1,0)
+# dic5 = consulting company, digital transformation
 
 
 sum (tweets$dic1_occurence)
