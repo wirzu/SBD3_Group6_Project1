@@ -38,7 +38,6 @@ Users = Users[!duplicated(Users$User),]
 char_counts <- nchar(tweets$Tweet)
 av_char_count <- mean(char_counts)
 rounded_avg_char_count <- round(av_char_count, 2)
-# tabelle einfügen mit rounded_avg_char_count!!!!!
 
 #create median
 retweets_median = median(Users$Retweets)
@@ -68,7 +67,7 @@ print(my_table)
 Hier Erklärung Tabelle einfügen. (Joshi)
 
 ```{R}
-#Average/ median of Hour when to tweet, Nr of Retweets, Likes, Followers, Friends, verified
+#Average/ median of Hour when to tweet, Nr. of Retweets, Likes, Followers, Friends, verified
 
 #create Histogramm for Tweettime
 plot_dataHour <- tweets %>% 
@@ -86,7 +85,7 @@ ggplot (plot_dataHour,
 Hier Erklärung Grafik einfügen. (Joshi)
 
 ```{R}
-#Number of tweets tweeted of an user
+#Number of follower
 #range breaks
 range_breaks <- c(0, 100, 500, 1500, 5000, 15000000)
 
@@ -107,7 +106,7 @@ ggplot(Users, aes(x = range, fill = range)) +
 Hier Erklärung Grafik einfügen. (Joshi)
 
 ```{R}
-#number of tweets over time
+#Number of tweets over time
 plot_data <- tweets %>% 
   group_by (tweet_date) %>%
   count()
@@ -116,11 +115,120 @@ ggplot (plot_data,
         aes (x=tweet_date, y=n)) +
   geom_bar(stat = "identity")+
   theme_minimal () +
-  ggtitle("Number of reviews over time (per day)") +
+  ggtitle("Number of tweets over time (per day)") +
   xlab("Date 22/23") +
   ylab("Number of tweets")
 ```
 Hier Erklärung Grafik einfügen. (Joshi)
+Es ist ein klarer Anstieg von Tweets zuerkennen vom 2. Dezember bis zum 9. Dezember. (noch übersetzten und erklären)
+
+```{R}
+# Wordcloud of tweets between 2. and 9. Decembre
+library(quanteda)
+library(stopwords)
+library(topicmodels)
+library(tidytext)
+library(quanteda.textplots)
+
+#Count the number of characters
+tweets$tweet_length <- nchar(tweets$Tweet)
+
+#Specify minimum text length (number of characters)
+tweets_cloud <- subset(tweets, nchar(Tweet) > 200)
+
+# Tweets between 02.12 and 09.12
+tweets_filtered <- tweets_cloud[as.Date(tweets_cloud$tweet_date) >= as.Date("2022-12-01") & as.Date(tweets_cloud$tweet_date) <= as.Date("2022-12-09"),]
+
+# Define additional stopwords
+extended_stopwords <- c("one", "like", "get", "use", "can", "#chatgpt", "chatgpt", "#ai", "ai")
+
+# Transform words into tokens, select basic text preprocessing steps
+tokens <- tokens(tweets_filtered$Tweet,
+                 remove_punct = TRUE,
+                 remove_symbols = TRUE,
+                 remove_numbers = TRUE,
+                 remove_url = TRUE,
+                 remove_separators = TRUE)
+
+# remove stopwords
+tokens <- tokens_select(tokens, pattern = c(stopwords("english"), extended_stopwords), selection = "remove")
+
+# transform to lowercase
+tokens <- tokens_tolower(tokens)
+
+# Stem all words
+tokens <-tokens_wordstem(tokens)
+
+# Create n-grams of any length
+tokens <- tokens_ngrams(tokens, n = 1:2)
+
+# Create Document-feature-matrix
+myDfm <-dfm(tokens)
+
+
+# Create LDA model (specify number of topics)
+tweets_lda <- LDA(myDfm, k = 3, control = list(seed = 1111))
+topics <- as.data.frame(terms(tweets_lda, 50))
+
+# Convert into tidy-format to visualize results 
+tweets_lda_td <- tidy(tweets_lda)
+
+# Extract top-terms per topic 
+top_terms <- tweets_lda_td %>%
+  group_by(topic) %>%
+  top_n(10, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+# Visualize top-terms and their loadings (can you assign topic labels based on this information?) 
+top_terms %>%
+  mutate(term = reorder(term, beta)) %>%
+  ggplot(aes(term, beta, fill = factor(topic))) +
+  geom_bar(alpha = 0.8, stat = "identity", show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free") +
+  coord_flip()
+
+# Link results to metadata
+tmResult <- posterior(tweets_lda)
+theta <- tmResult$topics
+lda_results <- cbind(tweets_filtered, theta)
+rm (theta, tweets_lda,tweets_lda_td,tmResult,top_terms,tokens)
+
+
+
+library (ldatuning) 
+### Calculate different metrics to estimate the most preferable number of topics for LDA model
+## Be aware: The procedure is computation intensive 
+# ldatuning uses parallelism, specify the correct number of CPU cores in mc.core parameter to archive best performance
+
+# Calculate selected metrics
+result <- FindTopicsNumber(
+        myDfm,
+        topics = seq(from = 2, to = 10, by = 1),
+        metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+        method = "Gibbs",
+        control = list(seed = 77),
+        mc.cores = 2L,
+        verbose = TRUE)
+
+# plot results
+FindTopicsNumber_plot(result)
+
+# Create a wordcloud from your Document-Feature-Matrix
+textplot_wordcloud(myDfm,
+                   min_size = 0.5,
+                   max_size = 4,
+                   min_count = 10,
+                   max_words = 50,
+                   color = "darkblue")
+
+
+
+
+
+
+```
+
 ```{R}
 # Convert UserCreated to datetime format
 Users$UserCreated <- ymd_hms(Users$UserCreated)
@@ -178,7 +286,7 @@ Erklärung zu pre Prozessing, bzw. was wir entfernt haben. (Absichtlich nicht bu
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #Select text column and create your custom dictionary
-# dic1 = industries
+# dic1 = industries evtl. noch genauer beispiel Bildungswesen
 #tweets$dic1 <- "NA"
 tweets$dic1 <-str_count(tweets$preprocessed_text, "artificial intelligence|machine learning|automation|robotics|data")
 #tweets$dic1_occurence<- "NA"
@@ -193,12 +301,14 @@ tweets$dic3_occurence<-ifelse(tweets$dic3>=2,1,0)
 tweets$dic4 <-str_count(tweets$preprocessed_text, "excited|hyped|thrilled|stoked|pumped")
 tweets$dic4_occurence<-ifelse(tweets$dic4>=2,1,0)
 # dic5 = consulting company, digital transformation
-
+tweets$dic5 <-str_count(tweets$preprocessed_text, "analysis|big data|classification|neural networks|summarization")
+tweets$dic5_occurence<-ifelse(tweets$dic5>=2,1,0)
 
 sum (tweets$dic1_occurence)
 sum(tweets$dic2_occurence)
 sum(tweets$dic3_occurence)
 sum(tweets$dic4_occurence)
+sum(tweets$dic5_occurence)
 ```
 
 ```{R}
