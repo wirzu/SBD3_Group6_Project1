@@ -7,7 +7,14 @@ output:
   html_document: default
 ---
 
-##Introduction Beschriebung einfügen über Projekt. 
+This research aims to explore and gain insights into Chat GPT, an advanced language model, through text mining of tweets. The dataset provided for this study consists of tweets collected between November 30, 2022, and January 29, 2023. With nearly 180,000 tweets at our disposal, a comprehensive analysis will be conducted to uncover valuable information.
+
+The initial phase of this study involves a general analysis of the dataset, where patterns, trends, and key features will be identified. Following that, dictionaries will be defined, and automated content analysis techniques will be applied. This step will enable us to categorize and extract meaningful information from the tweets efficiently.
+
+In the final stage, a sentiment analysis will be performed using the "syuzhet" method. This approach will allow us to assess the emotional tone and sentiment expressed in the tweets, providing a deeper understanding of the public perception and attitudes towards Chat GPT during the specified time period.
+
+By leveraging the power of text mining and analyzing a substantial amount of Twitter data, this research aims to contribute to the existing knowledge about Chat GPT and provide valuable insights into its reception among Twitter users.
+
 ## Load packages and data
 
 ```{R}
@@ -57,14 +64,82 @@ verified_mean = mean(Users$UserVerified)
 
 # Create a tibble with the values
 my_table <- tibble(
-  Statistik = c("Retweets", "Likes", "Friends", "Followers", "Verified"),
+  Statistic = c("Retweets", "Likes", "Friends", "Followers", "Verified"),
   Median = c(retweets_median, likes_median, Friends_median, Followers_median, verified_median),
   Average = c(retweets_mean, likes_mean, Friends_mean, Followers_mean, verified_mean)
 )
 
 print(my_table)
 ```
-Hier Erklärung Tabelle einfügen. (Joshi)
+In the initial step, our focus was on analyzing the users who engaged with Chat GPT on Twitter. To ensure the accuracy of our analysis, we began by selecting unique user data, as there was a possibility that the same user may have tweeted about Chat GPT multiple times.
+
+The resulting table provided us with valuable statistics on user engagement. By analyzing these user metrics, we gain insights into the reach, influence, and engagement levels of users discussing Chat GPT on Twitter. This information sets the foundation for a deeper understanding of user behavior and its potential impact on the perception and adoption of Chat GPT.
+
+
+```{R}
+# Count the number of tweets per user
+tweet_counts <- as.data.frame(table(tweets$User))
+
+# Rename the columns of the tweet_counts data frame
+colnames(tweet_counts) <- c("User", "Tweet_Count")
+
+# Create a new data frame with the number of tweets per user
+multi_tweet_users <- tweet_counts[tweet_counts$Tweet_Count >= 1,]
+
+# Create a table that shows the number of times each user has tweeted about Chat GPT
+multi_tweet_table <- as.data.frame(table(multi_tweet_users$Tweet_Count))
+
+# Rename the columns of the multi_tweet_table data frame
+colnames(multi_tweet_table) <- c("Number_of_Tweets", "Number_of_Users")
+
+# Print the multi_tweet_table data frame
+multi_tweet_table
+```
+The generated table reveals that the majority of users only tweeted once about the topic. Surprisingly, only 19.64% of individuals tweeted a second time about Chat GPT. However, upon closer examination at the end of the table, it becomes evident that there are a few users who tweeted about it frequently. One particular user stands out, having tweeted 1325 times about Chat GPT within a span of 61 days, which is quite remarkable.
+
+The frequency at which this person tweeted raises eyebrows. It implies that, on average, they posted a tweet every 66 minutes. Such prolific tweeting activity prompts curiosity and warrants further investigation into the motivations and circumstances behind their extensive engagement with Chat GPT.
+
+This finding highlights the wide variation in user behavior when it comes to discussing Chat GPT on Twitter. While the majority of users exhibit minimal involvement, a small group demonstrates extraordinary dedication and interest in the topic. 
+
+```{R}
+# Create a table with the top 10 users with the highest tweet counts
+top_10_users <- tweet_counts %>%
+  arrange(desc(Tweet_Count)) %>%
+  head(10)
+
+# Print the top 10 users table
+print(top_10_users)
+```
+We manually examined the users in the dataset, and it was observed that "MidJourneyAI_" had the highest number of tweets. However, upon closer inspection, it became apparent that this user had been repeatedly posting the same tweet using a bot. This behavior raises questions about the authenticity and motives behind their actions.
+
+In contrast, the user with the second-highest number of tweets, "richardkimphd," appears to be a genuine account. This user predominantly shares tweets related to AI, indicating a keen interest in the topic. Their account reflects a high level of activity, suggesting that they are an active and engaged Twitter user.
+
+These findings underscore the importance of discerning between automated or inauthentic accounts and genuine user engagement when analyzing Twitter data. Understanding the characteristics and behaviors of different users can help shed light on the broader dynamics and perspectives within the online AI community.
+
+We decided to delete all multiple tweets before analyzing the data further.
+
+
+```{R}
+# Number of rows before removing duplicate tweets
+before <- nrow(tweets)
+
+# Remove rows with duplicate tweets
+tweets_unique <- tweets[!duplicated(tweets$Tweet), ]
+
+# Number of rows after removing duplicate tweets
+after <- nrow(tweets_unique)
+
+# Number of rows removed
+removed <- before - after
+
+# Display the number of removed rows
+cat("The removal of duplicate tweets resulted in", removed, "rows being removed.")
+
+```
+Fortunately, only 959 tweets were removed, which is not a significant loss considering the dataset size of nearly 180,000 tweets.
+
+The removal of these tweets has minimal impact on the overall analysis and findings. With such a vast collection of tweets, the remaining dataset still provides ample data for conducting meaningful analyses and drawing reliable conclusions.
+
 
 ```{R}
 #Average/ median of Hour when to tweet, Nr. of Retweets, Likes, Followers, Friends, verified
@@ -82,7 +157,11 @@ ggplot (plot_dataHour,
   xlab("Hour") +
   ylab("Number of tweets")
 ```
-Hier Erklärung Grafik einfügen. (Joshi)
+It is evident from the plot that the number of tweets steadily increases from around noon and peaks at around 5 PM. This pattern suggests that most people engage in tweeting about the topic during their work hours.
+
+The surge in tweet activity during the afternoon hours aligns with the assumption that individuals are actively discussing and sharing their thoughts on Chat GPT while they are at work or engaged in related activities.
+
+However, starting from 6 PM, there is a noticeable decline in the number of tweets. This decrease could be attributed to the assumption that individuals tend to finish their workday around 5 PM and gradually shift their focus to other activities or responsibilities outside of work.
 
 ```{R}
 #Number of follower
@@ -99,8 +178,7 @@ ggplot(Users, aes(x = range, fill = range)) +
   geom_bar() + 
   labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users") + scale_x_discrete(labels = c("0-100", "101-500", "501-1500", "1501-5000", "5000+")) +
   scale_y_continuous(labels = scales::comma_format()) +
-  guides(fill = "none") # remove legend
-
+  guides(fill = "none")
 
 ```
 Hier Erklärung Grafik einfügen. (Joshi)
@@ -121,6 +199,16 @@ ggplot (plot_data,
 ```
 Hier Erklärung Grafik einfügen. (Joshi)
 Es ist ein klarer Anstieg von Tweets zuerkennen vom 2. Dezember bis zum 9. Dezember. (noch übersetzten und erklären)
+
+Ideen Abishan (muss noch kontrolliert werden)
+OpenAI has unveiled on the 3th of November the public beta launch of the DALL·E API, providing developers with the opportunity to incorporate DALL·E's image generation capabilities into their own applications and products. With DALL·E's remarkable adaptability, users can effortlessly produce and modify a diverse range of images, spanning from artistic renditions to convincingly lifelike representations.
+
+We suspect that the reason for the relative calm on Twitter in early December was likely due to the public beta release of the DALL·E API. It is possible that there were significant discussions and debates about Chat GPT during the period from early November to early December, which gradually subsided. However, on December 8, OpenAI published a new piece of content that once again sparked discussions surrounding Chat GPT.
+
+On December 8, OpenAI released an interview featuring Christian Gibson, an engineer on the Supercomputing team at the company. In the interview, he shares insights into his journey into engineering and how he became a part of OpenAI. Christian also discusses the specific challenges he focuses on addressing, such as the complexities involved in AI workflows and overcoming bottlenecks when running codes on supercomputers. He highlights what sets working on supercomputing at OpenAI apart from other places, such as the immense scale of the operation, and provides a glimpse into his typical day at OpenAI.
+
+This practical and informative publication likely led to renewed discussions and conversations about Chat GPT.
+
 
 ```{R}
 # Convert UserCreated to datetime format
