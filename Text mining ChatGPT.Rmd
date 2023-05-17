@@ -3,8 +3,8 @@ title: "Text mining ChatGPT"
 author: "Abishan, Josua, Lars, Luca"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 This research aims to explore and gain insights into Chat GPT, an advanced language model, through text mining of tweets. The dataset provided for this study consists of tweets collected between November 30, 2022, and January 29, 2023. With nearly 180,000 tweets at our disposal, a comprehensive analysis will be conducted to uncover valuable information.
@@ -99,7 +99,7 @@ The generated table reveals that the majority of users only tweeted once about t
 
 The frequency at which this person tweeted raises eyebrows. It implies that, on average, they posted a tweet every 66 minutes. Such prolific tweeting activity prompts curiosity and warrants further investigation into the motivations and circumstances behind their extensive engagement with Chat GPT.
 
-This finding highlights the wide variation in user behavior when it comes to discussing Chat GPT on Twitter. While the majority of users exhibit minimal involvement, a small group demonstrates extraordinary dedication and interest in the topic. 
+This finding highlights the wide variation in user behavior when it comes to discussing Chat GPT on Twitter. While the majority of users exhibit minimal involvement, a small group demonstrates extraordinary dedication and interest in the topic.
 
 ```{R}
 # Create a table with the top 10 users with the highest tweet counts
@@ -221,12 +221,14 @@ ggplot(Users, aes(x = UserCreated)) +
   ggtitle("Twitter Account Creation Dates")
 
 ```
-Hier Erklärung Grafik einfügen. (Joshi)
+The plotted data of Twitter account creation reveals two noticeable peaks. The first peak occurred around 2009, which corresponds to a significant surge in user growth for Twitter. During this period, Twitter experienced a substantial influx of new users, marking a pivotal moment in its expansion and popularity.
+
+The second peak in the plot can be attributed to the acquisition of Twitter by Elon Musk, a prominent figure in the tech industry. This event likely generated significant attention and media coverage, leading to a surge in user account creations.
+Beyond these observations, the chart offers no other discernible insights or useful information.
 
 ## 2. What are the tweets about, what do users associated the new technology with (e.g. industries, specific applications, and also emotions)?
 
 ## Pre processing
-
 ```{R}
 # Define a function to preprocess the text
 preprocess_text <- function(text) {
@@ -259,79 +261,92 @@ preprocess_text <- function(text) {
 tweets$preprocessed_text <- sapply(tweets$Tweet, preprocess_text)
 
 ```
-Erklärung zu pre Prozessing, bzw. was wir entfernt haben. (Absichtlich nicht buchstaben sonder Füllwörter entfernt)
+In the steps seen above, we have performed preprocessing steps to clean and prepare the text data. The steps include converting the text to lowercase, removing emojis and emoticons, eliminating numbers, removing punctuation, reducing whitespace, and removing stopwords and other specified words. These preprocessing steps aim to standardize the text data and remove irrelevant elements, ensuring a cleaner and more consistent dataset for further analysis. Applying the preprocessing function to the "Tweet" column of the "tweets" dataset creates a new column called "preprocessed_text," which contains the preprocessed text ready for the analysis.
+
+## Automated Content Analysis
 ```{R}
+# Select text column and create your custom dictionaries
+# Dictionary 1: Education
+tweets$dic1 <- str_count(tweets$preprocessed_text, "education|learning|school|students|teachers|classroom|knowledge|university|academic|skills|curriculum|research|study|online learning|student loans")
+tweets$dic1_occurrence <- ifelse(tweets$dic1 >= 2, 1, 0)
 
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### STEP 3: PERFORM AUTOMATED CONTENT ANALYSIS
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Dictionary 2: Consulting Company, Digital Transformation
+tweets$dic2 <- str_count(tweets$preprocessed_text, "consulting|company|digital transformation|strategy|innovation|technology|business|data analytics|automation|change management|customer experience|digitalization|leadership|agile|disruption")
+tweets$dic2_occurrence <- ifelse(tweets$dic2 >= 2, 1, 0)
 
-#Select text column and create your custom dictionary
-# dic1 = industries evtl. noch genauer beispiel Bildungswesen
-#tweets$dic1 <- "NA"
-tweets$dic1 <-str_count(tweets$preprocessed_text, "artificial intelligence|machine learning|automation|robotics|data")
-#tweets$dic1_occurence<- "NA"
-tweets$dic1_occurence<-ifelse(tweets$dic1>=2,1,0)
-# dic2 = specific applications
-tweets$dic2 <-str_count(tweets$preprocessed_text, "chatbot|language modeling|ai|artificial intelligence|ml|machine learning")
-tweets$dic2_occurence<-ifelse(tweets$dic2>=2,1,0)
-# dic3 = emotions
-tweets$dic3 <-str_count(tweets$preprocessed_text, "excited|happy|frustated|angry|sad|amused")
-tweets$dic3_occurence<-ifelse(tweets$dic3>=2,1,0)
-# dic4 = hype
-tweets$dic4 <-str_count(tweets$preprocessed_text, "excited|hyped|thrilled|stoked|pumped")
-tweets$dic4_occurence<-ifelse(tweets$dic4>=2,1,0)
-# dic5 = consulting company, digital transformation
-tweets$dic5 <-str_count(tweets$preprocessed_text, "analysis|big data|classification|neural networks|summarization")
-tweets$dic5_occurence<-ifelse(tweets$dic5>=2,1,0)
+# Dictionary 3: Industry, Factories
+tweets$dic3 <- str_count(tweets$preprocessed_text, "industry|factories|manufacturing|production|supply chain|logistics|machinery|automation|quality control|assembly line|efficiency|process optimization|industrial revolution|industrial engineering|industrialization")
+tweets$dic3_occurrence <- ifelse(tweets$dic3 >= 2, 1, 0)
 
-sum (tweets$dic1_occurence)
-sum(tweets$dic2_occurence)
-sum(tweets$dic3_occurence)
-sum(tweets$dic4_occurence)
-sum(tweets$dic5_occurence)
+# Dictionary 4: Art
+tweets$dic4 <- str_count(tweets$preprocessed_text, "art|artists|painting|sculpture|photography|creativity|exhibition|museum|aesthetics|expression|visual arts|contemporary art|performance art|art gallery|artistic expression")
+tweets$dic4_occurrence <- ifelse(tweets$dic4 >= 2, 1, 0)
+
+# Dictionary 5: Finance, Banking
+tweets$dic5 <- str_count(tweets$preprocessed_text, "finance|banking|financial services|investment|money|loans|savings|credit cards|wealth management|financial planning|insurance|retirement|mortgage|asset management|banking sector")
+tweets$dic5_occurrence <- ifelse(tweets$dic5 >= 2, 1, 0)
+
+# Calculate the sums of occurrences for each dictionary
+sum(tweets$dic1_occurrence)
+sum(tweets$dic2_occurrence)
+sum(tweets$dic3_occurrence)
+sum(tweets$dic4_occurrence)
+sum(tweets$dic5_occurrence)
+
 ```
 
 ```{R}
-## VISUALIZE RESULTS dictionary 1 (industries)
+## VISUALIZE RESULTS dictionary 1 (Education)
 #sum of reviews that cover topic per day
 plot_content_data1 <- tweets %>% 
   group_by (tweet_date) %>%
-  summarise(n_content=sum(dic1_occurence))
+  summarise(n_content=sum(dic1_occurrence))
 
-ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic industries (per month)")
+ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic education (per month)")
 ```
-Erklärung einfügen Dictionary industries!!!
+Erklärung einfügen Dictionary Education!!!
 ```{R}
-## VISUALIZE RESULTS dictionary 2 (specific applications)
+## VISUALIZE RESULTS dictionary 2 (Consulting Company, Digital Transformation)
 #sum of reviews that cover topic per day
 plot_content_data2 <- tweets %>% 
   group_by (tweet_date) %>%
-  summarise(n_content=sum(dic2_occurence))
+  summarise(n_content=sum(dic2_occurrence))
 
 ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic specific applications (per month)")
 ```
-Erklärung einfügen Dictionary specific applications!!!
+Erklärung einfügen Dictionary Consulting Company, Digital Transformation!!!
 ```{R}
-## VISUALIZE RESULTS dictionary 3 (emotions)
+## VISUALIZE RESULTS dictionary 3 (Industry, Factories)
 #sum of reviews that cover topic per day
 plot_content_data3 <- tweets %>% 
   group_by (tweet_date) %>%
-  summarise(n_content=sum(dic3_occurence))
+  summarise(n_content=sum(dic3_occurrence))
 
 ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic emotions (per month)")
 ```
-Erklärung einfügen Dictionary emotions!!!
+Erklärung einfügen Dictionary Industry, Factories!!!
 ```{R}
-## VISUALIZE RESULTS dictionary 4 (hype)
+## VISUALIZE RESULTS dictionary 4 (Art)
 #sum of reviews that cover topic per day
 plot_content_data4 <- tweets %>% 
   group_by (tweet_date) %>%
-  summarise(n_content=sum(dic4_occurence))
+  summarise(n_content=sum(dic4_occurrence))
 
 ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic hype (per month)")
 ```
-Erklärung einfügen Dictionary hype!!!
+Erklärung einfügen Dictionary Art!!!
+```{r}
+## VISUALIZE RESULTS dictionary 5 (Finance, Banking)
+#sum of reviews that cover topic per day
+plot_content_data5 <- tweets %>% 
+  group_by (tweet_date) %>%
+  summarise(n_content=sum(dic5_occurrence))
+
+ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic Finance, Banking (per month)")
+```
+Erklärung einfügen Dictionary Finance, Banking!!!
+
+
 ```{R}
 # Perform sentiment analysis
 #Select text column and calculate sentiment scores. You can change the method (e.g."syuzhet", "bing", "nrc")
