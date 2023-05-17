@@ -3,8 +3,8 @@ title: "Text mining ChatGPT"
 author: "Abishan, Josua, Lars, Luca"
 date: "`r Sys.Date()`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 This research aims to explore and gain insights into Chat GPT, an advanced language model, through text mining of tweets. The dataset provided for this study consists of tweets collected between November 30, 2022, and January 29, 2023. With nearly 180,000 tweets at our disposal, a comprehensive analysis will be conducted to uncover valuable information.
@@ -181,7 +181,24 @@ ggplot(Users, aes(x = range, fill = range)) +
   guides(fill = "none")
 
 ```
-Hier Erklärung Grafik einfügen. (Joshi)
+The graph depicting the number of followers per user reveals some interesting insights.
+
+Firstly, it is noticeable that a significant portion of users, approximately 30,000 individuals, have a relatively low follower count ranging from 0 to 100. This suggests a large number of users with a limited reach or audience. Moving on, around 25,000 users fall into the range of 101 to 500 followers, indicating a moderate level of influence or popularity among this group.On the other hand, there is a smaller subset of approximately 8,000 users who boast a substantial following, surpassing 5,000 followers. These individuals likely possess a higher level of influence, attracting a significant number of people interested in their content or opinions.
+
+Given these observations, our next step would involve delving deeper into the users with the highest number of followers. 
+
+```{R}
+top_users <- tweets %>%
+  group_by(User) %>%
+  summarise(Total_Tweets = n(),
+            User_Followers = first(UserFollowers)) %>%
+  arrange(desc(User_Followers)) %>%
+  top_n(10)
+
+top_users
+
+```
+It is interesting to observe that the majority of users in the top 10 list are from India. A few users originate from Pakistan, and one or two users represent the United States. This highlights the significant presence and influence of Indian users in the dataset, reflecting the popularity of these accounts among Twitter users in the region.
 
 ```{R}
 #Number of tweets over time
@@ -302,7 +319,7 @@ plot_content_data1 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic1_occurrence))
 
-ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic education (per month)")
+ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'education' (per day)")
 ```
 Erklärung einfügen Dictionary Education!!!
 ```{R}
@@ -312,7 +329,7 @@ plot_content_data2 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic2_occurrence))
 
-ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic specific applications (per month)")
+ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Consulting Company, Digital Transformation' (per day)")
 ```
 Erklärung einfügen Dictionary Consulting Company, Digital Transformation!!!
 ```{R}
@@ -322,7 +339,7 @@ plot_content_data3 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic3_occurrence))
 
-ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic emotions (per month)")
+ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Industry, Factories' (per day)")
 ```
 Erklärung einfügen Dictionary Industry, Factories!!!
 ```{R}
@@ -332,7 +349,7 @@ plot_content_data4 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic4_occurrence))
 
-ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic hype (per month)")
+ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Art' (per day)")
 ```
 Erklärung einfügen Dictionary Art!!!
 ```{r}
@@ -342,32 +359,33 @@ plot_content_data5 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic5_occurrence))
 
-ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic Finance, Banking (per month)")
+ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Finance, Banking' (per day)")
 ```
 Erklärung einfügen Dictionary Finance, Banking!!!
 
 
 ```{R}
 # Perform sentiment analysis
-#Select text column and calculate sentiment scores. You can change the method (e.g."syuzhet", "bing", "nrc")
 tweets$sentiment <- "NA"
 tweets$sentiment <- get_sentiment(tweets$preprocessed_text, method="syuzhet", lang="english")
 
-## VISUALIZE RESULTS
-# mean over time
-plot_sentiment_data <- tweets %>% 
-  group_by (tweet_date) %>%
-  summarise(n_sentiment=mean(sentiment))
+# Filter data based on the specified date
+filtered_tweets <- tweets %>%
+  filter(tweet_date >= as.POSIXct("2022-12-01 00:00:00"))
 
-ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + geom_line()+ theme_minimal () + ggtitle("Sentiment scores over time (mean per month)")
+# Calculate the mean sentiment over time
+plot_sentiment_data <- filtered_tweets %>% 
+  group_by(tweet_date) %>%
+  summarise(n_sentiment = mean(sentiment))
+
+# Plot the analysis
+ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + geom_line()+ theme_minimal () + ggtitle("Sentiment scores over time (mean per day)")
 ```
+We have chosen to select data starting from December 1, 2022, for the sentiment analysis plot. This decision was made because in the initial days of the dataset, there were relatively few users tweeting. Including these few users would heavily skew the overall sentiment analysis. The plot reveals a gradual increase in the n_sentiment from 0.6, eventually leading to a prominent peak around the end of 2022, reaching approximately 0.875. From there, until the end of the dataset in late January 2023, the n_sentiment remained consistently around 0.7. This trend suggests a notable shift in sentiment towards more positive or favorable expressions related to the topic of discussion captured in the tweets during the analyzed period.
+
+## Additional analysis
 
 ```{R}
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### STEP 5: PERFORM ADDITIONAL ANALYSIS
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 #correlation of sentiment with custom dictionary
 cor(tweets$dic1, tweets$Likes, method = "pearson")
 cor(tweets$dic1, tweets$sentiment, method = "pearson")
@@ -377,4 +395,6 @@ cor(tweets$dic3, tweets$Likes, method = "pearson")
 cor(tweets$dic3, tweets$sentiment, method = "pearson")
 cor(tweets$dic4, tweets$Likes, method = "pearson")
 cor(tweets$dic4, tweets$sentiment, method = "pearson")
+cor(tweets$dic5, tweets$Likes, method = "pearson")
+cor(tweets$dic5, tweets$sentiment, method = "pearson")
 ````
