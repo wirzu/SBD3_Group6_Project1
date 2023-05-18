@@ -65,8 +65,10 @@ verified_mean = mean(Users$UserVerified)
 # Create a tibble with the values
 my_table <- tibble(
   Statistic = c("Retweets", "Likes", "Friends", "Followers", "Verified"),
-  Median = c(retweets_median, likes_median, Friends_median, Followers_median, verified_median),
-  Average = c(retweets_mean, likes_mean, Friends_mean, Followers_mean, verified_mean)
+  Median = c(retweets_median, likes_median, Friends_median, Followers_median, 
+             verified_median),
+  Average = c(retweets_mean, likes_mean, Friends_mean, Followers_mean, 
+              verified_mean)
 )
 
 print(my_table)
@@ -91,15 +93,32 @@ multi_tweet_table <- as.data.frame(table(multi_tweet_users$Tweet_Count))
 
 # Rename the columns of the multi_tweet_table data frame
 colnames(multi_tweet_table) <- c("Number_of_Tweets", "Number_of_Users")
-
-# Print the multi_tweet_table data frame
-multi_tweet_table
 ```
 The generated table reveals that the majority of users only tweeted once about the topic. Surprisingly, only 19.64% of individuals tweeted a second time about Chat GPT. However, upon closer examination at the end of the table, it becomes evident that there are a few users who tweeted about it frequently. One particular user stands out, having tweeted 1325 times about Chat GPT within a span of 61 days, which is quite remarkable.
 
 The frequency at which this person tweeted raises eyebrows. It implies that, on average, they posted a tweet every 66 minutes. Such prolific tweeting activity prompts curiosity and warrants further investigation into the motivations and circumstances behind their extensive engagement with Chat GPT.
 
 This finding highlights the wide variation in user behavior when it comes to discussing Chat GPT on Twitter. While the majority of users exhibit minimal involvement, a small group demonstrates extraordinary dedication and interest in the topic.
+
+
+In the next step, I want to determine which user has the highest number of retweeted tweets. By analyzing the dataset, I will identify the user whose tweets have been retweeted the most frequently. This information will provide insights into the user's influence and the impact of their tweets within the community. By identifying the user with the highest retweet count, we can gain valuable insights into the most engaging and influential content in our dataset.
+
+```{R}
+# Group the tweets by user and calculate the total retweets for each user
+user_retweets <- tweets %>%
+  group_by(User) %>%
+  summarise(total_retweets = sum(Retweets)) %>%
+  arrange(desc(total_retweets)) %>%
+  top_n(10)
+
+# Print the table
+user_retweets
+
+```
+
+It is evident that the tweets by [DataChaz](https://twitter.com/DataChaz?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor) have been retweeted significantly more than others. DataChaz is a London-based developer who has been active on Twitter since 2009. He has a strong interest in Artificial Intelligence and regularly updates his 93,000 followers with valuable information in this domain. DataChaz often shares useful code snippets, allowing enthusiasts to explore various AI APIs and gain hands-on experience. The high retweet count indicates the relevance and impact of DataChaz's content, making him a prominent figure within the AI community on Twitter.
+
+![Twitter account of DataChaz](./Twitteraccount_DataChazGPT.png)
 
 ```{R}
 # Create a table with the top 10 users with the highest tweet counts
@@ -133,7 +152,8 @@ after <- nrow(tweets_unique)
 removed <- before - after
 
 # Display the number of removed rows
-cat("The removal of duplicate tweets resulted in", removed, "rows being removed.")
+cat("The removal of duplicate tweets resulted in", removed, 
+    "rows being removed.")
 
 ```
 Fortunately, only 959 tweets were removed, which is not a significant loss considering the dataset size of nearly 180,000 tweets.
@@ -142,9 +162,8 @@ The removal of these tweets has minimal impact on the overall analysis and findi
 
 
 ```{R}
-#Average/ median of Hour when to tweet, Nr. of Retweets, Likes, Followers, Friends, verified
-
-#create Histogramm for Tweettime
+# Average/ median of Hour when to tweet
+# Create Histogramm for Tweettime
 plot_dataHour <- tweets %>% 
   group_by (timeofday_hour) %>%
   count()
@@ -176,7 +195,9 @@ Users <- na.omit(Users)
 # Creating Barplot
 ggplot(Users, aes(x = range, fill = range)) + 
   geom_bar() + 
-  labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users") + scale_x_discrete(labels = c("0-100", "101-500", "501-1500", "1501-5000", "5000+")) +
+  labs(title = "Number of Twitter-Follower", x = "Range", y = "Number of users") + 
+  scale_x_discrete(labels = c("0-100", "101-500", "501-1500", 
+                              "1501-5000", "5000+")) +
   scale_y_continuous(labels = scales::comma_format()) +
   guides(fill = "none")
 
@@ -267,7 +288,8 @@ preprocess_text <- function(text) {
   
   # Remove stopwords and other words to be removed
   words_to_remove <- c("the", "and", "in", "to", "a", "of")
-  words_to_remove_pattern <- paste0("\\b(", paste(words_to_remove, collapse = "|"), ")\\b")
+  words_to_remove_pattern <- paste0("\\b(", paste(words_to_remove, 
+                                                  collapse = "|"), ")\\b")
   text <- gsub(words_to_remove_pattern, "", text, ignore.case = TRUE)
   
   # Return the preprocessed text
@@ -284,23 +306,38 @@ In the steps seen above, we have performed preprocessing steps to clean and prep
 ```{R}
 # Select text column and create your custom dictionaries
 # Dictionary 1: Education
-tweets$dic1 <- str_count(tweets$preprocessed_text, "education|learning|school|students|teachers|classroom|knowledge|university|academic|skills|curriculum|research|study|online learning|student loans")
+tweets$dic1 <- str_count(tweets$preprocessed_text, 
+"education|learning|school|students|teachers|classroom|knowledge|
+university|academic|skills|curriculum|research|study|online learning|
+student loans")
 tweets$dic1_occurrence <- ifelse(tweets$dic1 >= 2, 1, 0)
 
 # Dictionary 2: Consulting Company, Digital Transformation
-tweets$dic2 <- str_count(tweets$preprocessed_text, "consulting|company|digital transformation|strategy|innovation|technology|business|data analytics|automation|change management|customer experience|digitalization|leadership|agile|disruption")
+tweets$dic2 <- str_count(tweets$preprocessed_text, 
+"consulting|company|digitaltransformation|strategy|innovation|technology|
+business|data analytics|automation|change management|customer experience|
+digitalization|leadership|agile|disruption")
 tweets$dic2_occurrence <- ifelse(tweets$dic2 >= 2, 1, 0)
 
 # Dictionary 3: Industry, Factories
-tweets$dic3 <- str_count(tweets$preprocessed_text, "industry|factories|manufacturing|production|supply chain|logistics|machinery|automation|quality control|assembly line|efficiency|process optimization|industrial revolution|industrial engineering|industrialization")
+tweets$dic3 <- str_count(tweets$preprocessed_text, 
+"industry|factories|manufacturing|production|supply chain|logistics|machinery|
+automation|quality control|assembly line|efficiency|process optimization|
+industrial revolution|industrial engineering|industrialization")
 tweets$dic3_occurrence <- ifelse(tweets$dic3 >= 2, 1, 0)
 
 # Dictionary 4: Art
-tweets$dic4 <- str_count(tweets$preprocessed_text, "art|artists|painting|sculpture|photography|creativity|exhibition|museum|aesthetics|expression|visual arts|contemporary art|performance art|art gallery|artistic expression")
+tweets$dic4 <- str_count(tweets$preprocessed_text,
+"art|artists|painting|sculpture|photography|creativity|exhibition|museum|
+aesthetics|expression|visual arts|contemporary art|performance art|art gallery|
+artistic expression")
 tweets$dic4_occurrence <- ifelse(tweets$dic4 >= 2, 1, 0)
 
 # Dictionary 5: Finance, Banking
-tweets$dic5 <- str_count(tweets$preprocessed_text, "finance|banking|financial services|investment|money|loans|savings|credit cards|wealth management|financial planning|insurance|retirement|mortgage|asset management|banking sector")
+tweets$dic5 <- str_count(tweets$preprocessed_text, 
+"finance|banking|financial services|investment|money|loans|savings|credit cards|
+wealth management|financial planning|insurance|retirement|mortgage|
+asset management|banking sector")
 tweets$dic5_occurrence <- ifelse(tweets$dic5 >= 2, 1, 0)
 
 # Calculate the sums of occurrences for each dictionary
@@ -319,7 +356,9 @@ plot_content_data1 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic1_occurrence))
 
-ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'education' (per day)")
+ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + 
+  geom_bar(stat = "identity")+ theme_minimal () + 
+  ggtitle("Number of reviews covering the topic 'education' (per day)")
 ```
 Erklärung einfügen Dictionary Education!!!
 ```{R}
@@ -329,7 +368,10 @@ plot_content_data2 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic2_occurrence))
 
-ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Consulting Company, Digital Transformation' (per day)")
+ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) + 
+  geom_bar(stat = "identity")+ theme_minimal () + 
+  ggtitle("Number of reviews covering the topic 'Consulting Company, 
+Digital Transformation' (per day)")
 ```
 Erklärung einfügen Dictionary Consulting Company, Digital Transformation!!!
 ```{R}
@@ -339,7 +381,9 @@ plot_content_data3 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic3_occurrence))
 
-ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Industry, Factories' (per day)")
+ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) + 
+  geom_bar(stat = "identity")+ theme_minimal () + 
+  ggtitle("Number of reviews covering the topic 'Industry, Factories' (per day)")
 ```
 Erklärung einfügen Dictionary Industry, Factories!!!
 ```{R}
@@ -349,7 +393,9 @@ plot_content_data4 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic4_occurrence))
 
-ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Art' (per day)")
+ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) + 
+  geom_bar(stat = "identity")+ theme_minimal () + 
+  ggtitle("Number of reviews covering the topic 'Art' (per day)")
 ```
 Erklärung einfügen Dictionary Art!!!
 ```{r}
@@ -359,7 +405,9 @@ plot_content_data5 <- tweets %>%
   group_by (tweet_date) %>%
   summarise(n_content=sum(dic5_occurrence))
 
-ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) + geom_bar(stat = "identity")+ theme_minimal () + ggtitle("Number of reviews covering the topic 'Finance, Banking' (per day)")
+ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) + 
+  geom_bar(stat = "identity")+ theme_minimal () + 
+  ggtitle("Number of reviews covering the topic 'Finance, Banking' (per day)")
 ```
 Erklärung einfügen Dictionary Finance, Banking!!!
 
@@ -367,7 +415,8 @@ Erklärung einfügen Dictionary Finance, Banking!!!
 ```{R}
 # Perform sentiment analysis
 tweets$sentiment <- "NA"
-tweets$sentiment <- get_sentiment(tweets$preprocessed_text, method="syuzhet", lang="english")
+tweets$sentiment <- get_sentiment(tweets$preprocessed_text, 
+                                  method="syuzhet", lang="english")
 
 # Filter data based on the specified date
 filtered_tweets <- tweets %>%
@@ -379,7 +428,9 @@ plot_sentiment_data <- filtered_tweets %>%
   summarise(n_sentiment = mean(sentiment))
 
 # Plot the analysis
-ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + geom_line()+ theme_minimal () + ggtitle("Sentiment scores over time (mean per day)")
+ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + 
+  geom_line()+ theme_minimal () + 
+  ggtitle("Sentiment scores over time (mean per day)")
 ```
 We have chosen to select data starting from December 1, 2022, for the sentiment analysis plot. This decision was made because in the initial days of the dataset, there were relatively few users tweeting. Including these few users would heavily skew the overall sentiment analysis. The plot reveals a gradual increase in the n_sentiment from 0.6, eventually leading to a prominent peak around the end of 2022, reaching approximately 0.875. From there, until the end of the dataset in late January 2023, the n_sentiment remained consistently around 0.7. This trend suggests a notable shift in sentiment towards more positive or favorable expressions related to the topic of discussion captured in the tweets during the analyzed period.
 
