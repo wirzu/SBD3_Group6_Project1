@@ -359,7 +359,8 @@ ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) +
   geom_bar(stat = "identity")+ theme_minimal () + 
   ggtitle("Number of reviews covering the topic 'education' (per day)")
 ```
-Erklärung einfügen Dictionary Education!!!
+Initially, there was no particular upward trend, but from January onwards, the data regarding the "education" dictionary saw a significant surge. This is likely due to the realization that ChatGPT can be effectively employed in the education sector, not only in positive aspects but also in negative ones. However, it should be noted that its usage may lead to the potential elimination of learning effects among students or a reduction in diligence in completing assignments.
+
 ```{R}
 ## VISUALIZE RESULTS dictionary 2 (Consulting Company, Digital Transformation)
 #sum of reviews that cover topic per day
@@ -372,7 +373,8 @@ ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) +
   ggtitle("Number of reviews covering the topic 'Consulting Company, 
 Digital Transformation' (per day)")
 ```
-Erklärung einfügen Dictionary Consulting Company, Digital Transformation!!!
+In the second dictionary, we attempted to filter for consulting companies. By the end of the year in December, there is no significant hype or trend observable. However, starting from January to February, a clear hype becomes apparent, and the number of tweets has significantly increased. This trend in January is driven by the fact that ChatGPT is highly intriguing and applicable to consulting and its industry.
+
 ```{R}
 ## VISUALIZE RESULTS dictionary 3 (Industry, Factories)
 #sum of reviews that cover topic per day
@@ -399,6 +401,8 @@ ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) +
   geom_bar(stat = "identity")+ theme_minimal () + 
   ggtitle("Number of reviews covering the topic 'Art' (per day)")
 ```
+In the "art" dictionary, we can observe a general trend where the number of tweets has increased regarding ChatGPT. However, it is challenging to determine why this surge specifically relates to the art industry. Therefore, a trend is apparent, but it aligns with the overall number of tweets about ChatGPT and does not signify a specific trend in the art industry.
+
 Erklärung einfügen Dictionary Art!!!
 ```{r}
 ## VISUALIZE RESULTS dictionary 5 (Finance, Banking)
@@ -411,8 +415,7 @@ ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) +
   geom_bar(stat = "identity")+ theme_minimal () + 
   ggtitle("Number of reviews covering the topic 'Finance, Banking' (per day)")
 ```
-Erklärung einfügen Dictionary Finance, Banking!!!
-
+In December, the tweets related to the finance and banking industry are below the average trends of tweets about ChatGPT. However, starting from January, a clear upward trend becomes apparent, with significant spikes in the middle of the month. This is likely because the finance and banking sector is traditionally considered a slow-moving industry. Nevertheless, it becomes evident that even in these sectors, ChatGPT or artificial intelligence can and will bring about a significant transformation.
 
 ```{R}
 # Perform sentiment analysis
