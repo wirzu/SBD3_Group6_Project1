@@ -93,6 +93,8 @@ multi_tweet_table <- as.data.frame(table(multi_tweet_users$Tweet_Count))
 
 # Rename the columns of the multi_tweet_table data frame
 colnames(multi_tweet_table) <- c("Number_of_Tweets", "Number_of_Users")
+
+multi_tweet_table
 ```
 The generated table reveals that the majority of users only tweeted once about the topic. Surprisingly, only 19.64% of individuals tweeted a second time about Chat GPT. However, upon closer examination at the end of the table, it becomes evident that there are a few users who tweeted about it frequently. One particular user stands out, having tweeted 1325 times about Chat GPT within a span of 61 days, which is quite remarkable.
 
@@ -206,7 +208,7 @@ The graph depicting the number of followers per user reveals some interesting in
 
 Firstly, it is noticeable that a significant portion of users, approximately 30,000 individuals, have a relatively low follower count ranging from 0 to 100. This suggests a large number of users with a limited reach or audience. Moving on, around 25,000 users fall into the range of 101 to 500 followers, indicating a moderate level of influence or popularity among this group.On the other hand, there is a smaller subset of approximately 8,000 users who boast a substantial following, surpassing 5,000 followers. These individuals likely possess a higher level of influence, attracting a significant number of people interested in their content or opinions.
 
-Given these observations, our next step would involve delving deeper into the users with the highest number of followers. 
+Given these observations, our next step would involve diving deeper into the users with the highest number of followers. 
 
 ```{R}
 top_users <- tweets %>%
@@ -235,10 +237,7 @@ ggplot (plot_data,
   xlab("Date 22/23") +
   ylab("Number of tweets")
 ```
-Hier Erklärung Grafik einfügen. (Joshi)
-Es ist ein klarer Anstieg von Tweets zuerkennen vom 2. Dezember bis zum 9. Dezember. (noch übersetzten und erklären)
 
-Ideen Abishan (muss noch kontrolliert werden)
 OpenAI has unveiled on the 3th of November the public beta launch of the DALL·E API, providing developers with the opportunity to incorporate DALL·E's image generation capabilities into their own applications and products. With DALL·E's remarkable adaptability, users can effortlessly produce and modify a diverse range of images, spanning from artistic renditions to convincingly lifelike representations.
 
 We suspect that the reason for the relative calm on Twitter in early December was likely due to the public beta release of the DALL·E API. It is possible that there were significant discussions and debates about Chat GPT during the period from early November to early December, which gradually subsided. However, on December 8, OpenAI published a new piece of content that once again sparked discussions surrounding Chat GPT.
@@ -321,9 +320,9 @@ tweets$dic2_occurrence <- ifelse(tweets$dic2 >= 2, 1, 0)
 
 # Dictionary 3: Industry, Factories
 tweets$dic3 <- str_count(tweets$preprocessed_text, 
-"industry|factories|manufacturing|production|supply chain|logistics|machinery|
+"factor|manufacturing|production|supply chain|logistics|machinery|
 automation|quality control|assembly line|efficiency|process optimization|
-industrial revolution|industrial engineering|industrialization")
+industrial revolution|industrial engineering|industrialization|logistic|industry")
 tweets$dic3_occurrence <- ifelse(tweets$dic3 >= 2, 1, 0)
 
 # Dictionary 4: Art
@@ -385,7 +384,10 @@ ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) +
   geom_bar(stat = "identity")+ theme_minimal () + 
   ggtitle("Number of reviews covering the topic 'Industry, Factories' (per day)")
 ```
-Erklärung einfügen Dictionary Industry, Factories!!!
+We created a dictionary consisting of words related to the industry and factories. However, we found very few tweets containing these specific words. As a result, this graph does not provide substantial insights. Therefore, we have decided to disregard this particular dictionary.
+
+Additionally, we manually reviewed some tweets from this industry and experimented with other words as part of the dictionary. However, the only conclusion we can draw is that there was a limited amount of tweets discussing the industry and factories in connection with Chat-GPT.
+
 ```{R}
 ## VISUALIZE RESULTS dictionary 4 (Art)
 #sum of reviews that cover topic per day
