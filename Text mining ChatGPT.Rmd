@@ -3,8 +3,8 @@ title: "Text mining ChatGPT"
 author: "Abishan, Josua, Lars, Luca"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 This research aims to explore and gain insights into Chat GPT, an advanced language model, through text mining of tweets. The dataset provided for this study consists of tweets collected between November 30, 2022, and January 29, 2023. With nearly 180,000 tweets at our disposal, a comprehensive analysis will be conducted to uncover valuable information.
@@ -415,14 +415,12 @@ ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) +
   geom_bar(stat = "identity")+ theme_minimal () + 
   ggtitle("Number of reviews covering the topic 'Finance, Banking' (per day)")
 ```
-<<<<<<< HEAD
+
 In December, the tweets related to the finance and banking industry are below the average trends of tweets about ChatGPT. However, starting from January, a clear upward trend becomes apparent, with significant spikes in the middle of the month. This is likely because the finance and banking sector is traditionally considered a slow-moving industry. Nevertheless, it becomes evident that even in these sectors, ChatGPT or artificial intelligence can and will bring about a significant transformation.
 
-=======
-Erklärung einfügen Dictionary Finance, Banking!!!
 
 ## Senitment Analysis
->>>>>>> 16deef0e50aeb4b5ee2269133af7efe5d1027fc3
+
 ```{R}
 # Define a function to calculate sentiment using the syuzhet package
 calculate_sentiment <- function(text) {
@@ -561,4 +559,4 @@ cor(tweets$dic4, tweets$Likes, method = "pearson")
 cor(tweets$dic4, tweets$sentiment, method = "pearson")
 cor(tweets$dic5, tweets$Likes, method = "pearson")
 cor(tweets$dic5, tweets$sentiment, method = "pearson")
-````
+```
