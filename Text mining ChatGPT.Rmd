@@ -403,7 +403,6 @@ ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) +
 ```
 In the "art" dictionary, we can observe a general trend where the number of tweets has increased regarding ChatGPT. However, it is challenging to determine why this surge specifically relates to the art industry. Therefore, a trend is apparent, but it aligns with the overall number of tweets about ChatGPT and does not signify a specific trend in the art industry.
 
-Erklärung einfügen Dictionary Art!!!
 ```{r}
 ## VISUALIZE RESULTS dictionary 5 (Finance, Banking)
 #sum of reviews that cover topic per day
@@ -488,7 +487,7 @@ ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) +
 Dictionary 2 (Consulting Company, Digital Transformation)")
 ```
 
-Erklärung einfügen Dictionary 2 Consulting Company, Digital Transformation senitment
+In the sentiment analysis of the education domain, a slight negative trend can be observed. Although the sentiment score is above 1.5, indicating a generally positive sentiment, the decreasing trend suggests a slightly declining sentiment over time.
 
 ```{R}
 # Filter data based on the specified date
@@ -506,7 +505,8 @@ ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) +
   ggtitle("Sentiment scores over time (mean per day)
 Dictionary 4 (Art)")
 ```
-Erklärung einfügen Dictionary 4 Art senitment
+
+In the following sentiment analysis, it was observed that the overall sentiment value is consistently positive, with a very extreme outlier at the end of December in both positive and negative directions. However, there is a general decrease in the sentiment score from 1.25 to 1.0 in the sentiment analysis value.
 
 ```{R}
 # Filter data based on the specified date
@@ -524,7 +524,10 @@ ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) +
   ggtitle("Sentiment scores over time (mean per day)
 Dictionary 5 (Finance, Banking)")
 ```
-Erklärung einfügen Dictionary 5 Finance, Banking senitment
+
+In the recent sentiment analysis number 5, focusing on the finance and banking sector, the values are also positive, with a sentiment score ranging from 1 until the end of the analysis period, reaching 0.75. However, there is a highly negative outlier at the beginning of December, where the sentiment score drops below -1.
+
+
 
 
 Antworten für Frage 4. (einfach nur kopiert aus Chat-GPT, muss noch angepasst werden!!!)
