@@ -308,7 +308,7 @@ In the steps seen above, we have performed preprocessing steps to clean and prep
 tweets$dic1 <- str_count(tweets$preprocessed_text, 
 "education|learning|school|students|teachers|classroom|knowledge|
 university|academic|skills|curriculum|research|study|online learning|
-student loans")
+student loans|exam")
 tweets$dic1_occurrence <- ifelse(tweets$dic1 >= 2, 1, 0)
 
 # Dictionary 2: Consulting Company, Digital Transformation
@@ -415,13 +415,26 @@ ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) +
   geom_bar(stat = "identity")+ theme_minimal () + 
   ggtitle("Number of reviews covering the topic 'Finance, Banking' (per day)")
 ```
+<<<<<<< HEAD
 In December, the tweets related to the finance and banking industry are below the average trends of tweets about ChatGPT. However, starting from January, a clear upward trend becomes apparent, with significant spikes in the middle of the month. This is likely because the finance and banking sector is traditionally considered a slow-moving industry. Nevertheless, it becomes evident that even in these sectors, ChatGPT or artificial intelligence can and will bring about a significant transformation.
 
+=======
+Erklärung einfügen Dictionary Finance, Banking!!!
+
+## Senitment Analysis
+>>>>>>> 16deef0e50aeb4b5ee2269133af7efe5d1027fc3
 ```{R}
-# Perform sentiment analysis
-tweets$sentiment <- "NA"
-tweets$sentiment <- get_sentiment(tweets$preprocessed_text, 
-                                  method="syuzhet", lang="english")
+# Define a function to calculate sentiment using the syuzhet package
+calculate_sentiment <- function(text) {
+  # Calculate sentiment using the "syuzhet" package
+  sentiment_scores <- get_sentiment(text, method = "syuzhet")
+  
+  # Return the mean sentiment score
+  return(mean(sentiment_scores))
+}
+
+# Apply the sentiment function to the preprocessed tweets
+tweets$sentiment <- sapply(tweets$preprocessed_text, calculate_sentiment)
 
 # Filter data based on the specified date
 filtered_tweets <- tweets %>%
@@ -438,6 +451,101 @@ ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) +
   ggtitle("Sentiment scores over time (mean per day)")
 ```
 We have chosen to select data starting from December 1, 2022, for the sentiment analysis plot. This decision was made because in the initial days of the dataset, there were relatively few users tweeting. Including these few users would heavily skew the overall sentiment analysis. The plot reveals a gradual increase in the n_sentiment from 0.6, eventually leading to a prominent peak around the end of 2022, reaching approximately 0.875. From there, until the end of the dataset in late January 2023, the n_sentiment remained consistently around 0.7. This trend suggests a notable shift in sentiment towards more positive or favorable expressions related to the topic of discussion captured in the tweets during the analyzed period.
+
+
+In addition to analyzing all tweets, we are interested in how the attitudes about chat GPT were in the areas we defined. 
+
+```{R}
+# Filter data based on the specified date
+filtered_tweets <- tweets %>%
+  filter(tweet_date >= as.POSIXct("2022-12-01 00:00:00"), dic1_occurrence == 1)
+
+# Calculate the mean sentiment over time
+plot_sentiment_data <- filtered_tweets %>% 
+  group_by(tweet_date) %>%
+  summarise(n_sentiment = mean(sentiment))
+
+# Plot the analysis
+ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + 
+  geom_line()+ theme_minimal () +
+  ggtitle("Sentiment scores over time (mean per day)
+Dictionary 1 (Education)")
+```
+In the sentiment analysis of the education domain, a slight negative trend can be observed. Although the sentiment score is above 0.75, indicating a generally positive sentiment, the decreasing trend suggests a slightly declining sentiment over time.
+
+```{R}
+# Filter data based on the specified date
+filtered_tweets <- tweets %>%
+  filter(tweet_date >= as.POSIXct("2022-12-01 00:00:00"), dic2_occurrence == 1)
+
+# Calculate the mean sentiment over time
+plot_sentiment_data <- filtered_tweets %>% 
+  group_by(tweet_date) %>%
+  summarise(n_sentiment = mean(sentiment))
+
+# Plot the analysis
+ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + 
+  geom_line()+ theme_minimal () + 
+  ggtitle("Sentiment scores over time (mean per day)
+Dictionary 2 (Consulting Company, Digital Transformation)")
+```
+
+Erklärung einfügen Dictionary 2 Consulting Company, Digital Transformation senitment
+
+```{R}
+# Filter data based on the specified date
+filtered_tweets <- tweets %>%
+  filter(tweet_date >= as.POSIXct("2022-12-01 00:00:00"), dic4_occurrence == 1)
+
+# Calculate the mean sentiment over time
+plot_sentiment_data <- filtered_tweets %>% 
+  group_by(tweet_date) %>%
+  summarise(n_sentiment = mean(sentiment))
+
+# Plot the analysis
+ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + 
+  geom_line()+ theme_minimal () + 
+  ggtitle("Sentiment scores over time (mean per day)
+Dictionary 4 (Art)")
+```
+Erklärung einfügen Dictionary 4 Art senitment
+
+```{R}
+# Filter data based on the specified date
+filtered_tweets <- tweets %>%
+  filter(tweet_date >= as.POSIXct("2022-12-01 00:00:00"), dic5_occurrence == 1)
+
+# Calculate the mean sentiment over time
+plot_sentiment_data <- filtered_tweets %>% 
+  group_by(tweet_date) %>%
+  summarise(n_sentiment = mean(sentiment))
+
+# Plot the analysis
+ggplot (plot_sentiment_data, aes (x=tweet_date, y=n_sentiment)) + 
+  geom_line()+ theme_minimal () + 
+  ggtitle("Sentiment scores over time (mean per day)
+Dictionary 5 (Finance, Banking)")
+```
+Erklärung einfügen Dictionary 5 Finance, Banking senitment
+
+
+Antworten für Frage 4. (einfach nur kopiert aus Chat-GPT, muss noch angepasst werden!!!)
+
+As a consulting company, there are several ways you can leverage ChatGPT in client projects:
+
+1. Virtual Assistants: ChatGPT can be used to develop virtual assistants that can handle customer queries, provide personalized recommendations, and assist with basic tasks. This can enhance customer experience and improve operational efficiency.
+
+2. Content Generation: ChatGPT can be utilized to generate content such as blog posts, social media updates, or product descriptions. This can save time and effort in creating engaging and informative content.
+
+3. Language Translation: ChatGPT's language capabilities can be leveraged for language translation tasks, enabling clients to reach a wider audience and expand their global presence.
+
+4. Sentiment Analysis: Besides sentiment analysis of existing data, ChatGPT can be used to analyze social media conversations, customer feedback, or online reviews to gain insights into customer sentiment and identify areas for improvement.
+
+5. Personalization: By integrating ChatGPT into client projects, you can enable personalized experiences for users, tailoring recommendations, suggestions, or product offerings based on individual preferences and behaviors.
+
+Regarding the feasibility of using ChatGPT in client projects, it is crucial to consider factors such as the specific project requirements, data availability, and ethical considerations. While ChatGPT can bring significant benefits, it is important to evaluate the model's limitations and potential biases to ensure its appropriate use.
+
+In summary, ChatGPT can be a valuable tool in various consulting projects, providing opportunities for enhanced customer experiences, content generation, language translation, sentiment analysis, and personalization. However, careful evaluation, customization, and addressing ethical considerations are essential to maximize the benefits and mitigate any potential challenges.
 
 ## Additional analysis
 
