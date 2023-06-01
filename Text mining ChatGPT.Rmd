@@ -528,8 +528,6 @@ Dictionary 5 (Finance, Banking)")
 In the recent sentiment analysis number 5, focusing on the finance and banking sector, the values are also positive, with a sentiment score ranging from 1 until the end of the analysis period, reaching 0.75. However, there is a highly negative outlier at the beginning of December, where the sentiment score drops below -1.
 
 
-
-
 Antworten für Frage 4. (einfach nur kopiert aus Chat-GPT, muss noch angepasst werden!!!)
 
 As a consulting company, there are several ways you can leverage ChatGPT in client projects:
