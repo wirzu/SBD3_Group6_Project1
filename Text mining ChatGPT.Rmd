@@ -3,8 +3,8 @@ title: "Text mining ChatGPT"
 author: "Abishan, Josua, Lars, Luca"
 date: "`r Sys.Date()`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 This research aims to explore and gain insights into Chat GPT, an advanced language model, through text mining of tweets. The dataset provided for this study consists of tweets collected between November 30, 2022, and January 29, 2023. With nearly 180,000 tweets at our disposal, a comprehensive analysis will be conducted to uncover valuable information.
@@ -357,7 +357,7 @@ plot_content_data1 <- tweets %>%
 
 ggplot (plot_content_data1, aes (x=tweet_date, y=n_content)) + 
   geom_bar(stat = "identity")+ theme_minimal () + 
-  ggtitle("Number of reviews covering the topic 'education' (per day)")
+  ggtitle("Number of reviews covering the topic 1 'education' (per day)")
 ```
 Initially, there was no particular upward trend, but from January onwards, the data regarding the "education" dictionary saw a significant surge. This is likely due to the realization that ChatGPT can be effectively employed in the education sector, not only in positive aspects but also in negative ones. However, it should be noted that its usage may lead to the potential elimination of learning effects among students or a reduction in diligence in completing assignments.
 
@@ -370,7 +370,7 @@ plot_content_data2 <- tweets %>%
 
 ggplot (plot_content_data2, aes (x=tweet_date, y=n_content)) + 
   geom_bar(stat = "identity")+ theme_minimal () + 
-  ggtitle("Number of reviews covering the topic 'Consulting Company, 
+  ggtitle("Number of reviews covering the topic 2 'Consulting Company, 
 Digital Transformation' (per day)")
 ```
 In the second dictionary, we attempted to filter for consulting companies. By the end of the year in December, there is no significant hype or trend observable. However, starting from January to February, a clear hype becomes apparent, and the number of tweets has significantly increased. This trend in January is driven by the fact that ChatGPT is highly intriguing and applicable to consulting and its industry.
@@ -384,9 +384,9 @@ plot_content_data3 <- tweets %>%
 
 ggplot (plot_content_data3, aes (x=tweet_date, y=n_content)) + 
   geom_bar(stat = "identity")+ theme_minimal () + 
-  ggtitle("Number of reviews covering the topic 'Industry, Factories' (per day)")
+  ggtitle("Number of reviews covering the topic 3 'Industry, Factories' (per day)")
 ```
-We created a dictionary consisting of words related to the industry and factories. However, we found very few tweets containing these specific words. As a result, this graph does not provide substantial insights. Therefore, we have decided to disregard this particular dictionary.
+We created a dictionary consisting of words related to the industry and factories. However, we found very few tweets containing these specific words. As a result, this graph does not provide substantial insights. ___Therefore, we have decided to disregard this particular dictionary.___
 
 Additionally, we manually reviewed some tweets from this industry and experimented with other words as part of the dictionary. However, the only conclusion we can draw is that there was a limited amount of tweets discussing the industry and factories in connection with Chat-GPT.
 
@@ -399,7 +399,7 @@ plot_content_data4 <- tweets %>%
 
 ggplot (plot_content_data4, aes (x=tweet_date, y=n_content)) + 
   geom_bar(stat = "identity")+ theme_minimal () + 
-  ggtitle("Number of reviews covering the topic 'Art' (per day)")
+  ggtitle("Number of reviews covering the topic 4 'Art' (per day)")
 ```
 In the "art" dictionary, we can observe a general trend where the number of tweets has increased regarding ChatGPT. However, it is challenging to determine why this surge specifically relates to the art industry. Therefore, a trend is apparent, but it aligns with the overall number of tweets about ChatGPT and does not signify a specific trend in the art industry.
 
@@ -412,14 +412,14 @@ plot_content_data5 <- tweets %>%
 
 ggplot (plot_content_data5, aes (x=tweet_date, y=n_content)) + 
   geom_bar(stat = "identity")+ theme_minimal () + 
-  ggtitle("Number of reviews covering the topic 'Finance, Banking' (per day)")
+  ggtitle("Number of reviews covering the topic 5 'Finance, Banking' (per day)")
 ```
 
 In December, the tweets related to the finance and banking industry are below the average trends of tweets about ChatGPT. However, starting from January, a clear upward trend becomes apparent, with significant spikes in the middle of the month. This is likely because the finance and banking sector is traditionally considered a slow-moving industry. Nevertheless, it becomes evident that even in these sectors, ChatGPT or artificial intelligence can and will bring about a significant transformation.
 
+# How did the excitement and topics developed over time?
 
 ## Senitment Analysis
-
 ```{R}
 # Define a function to calculate sentiment using the syuzhet package
 calculate_sentiment <- function(text) {
